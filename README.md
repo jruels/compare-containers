@@ -1,6 +1,6 @@
-# Advanced Kubernetes Course Site
+# Migrating from Docker to containerd Course Site
 
-This site includes the labs for the Advanced Kubernetes class. 
+This site includes the labs for the Migrating from Docker to containerd class.
 
 
 ## Lab VMs  
@@ -12,17 +12,9 @@ Instructor will provide lab VM sheet.
 ## Labs
 
 ### Day 1
-Lab 1: [Install Kubernetes](labs/install-k8s/)  
-Lab 2: [Deployments](labs/multi-tier/)  
-Lab 3: [Advanced scheduling](labs/scheduling/)  
-Lab 4: [Taints and Jobs](labs/taints/)  
-Lab 5: [Custom scheduler](labs/custom-scheduler)  
-
-#### Day 2
-Lab 6: [Create ConfigMap](labs/configmap/)  
-Lab 7: [Health checks](labs/health-checks/)  
-Lab 8: [RBAC](labs/rbac/)  
-Lab 9: [Secrets](labs/secrets/)  
-Lab 10: [Init containers](labs/init/)  
+Lab 1: [Install Kubernetes with Docker](/labs/install-k8s-docker/)  
+Lab 2: [Migrate Kubernetes cluster to containerd](/labs/migrate-k8s-to-containerd/)  
+Lab 3: [Using crictl and ctr](labs/crictl-and-ctr/)  
+Lab 4: [Building images without Docker](labs/building-images-without-docker/)  
 
 
