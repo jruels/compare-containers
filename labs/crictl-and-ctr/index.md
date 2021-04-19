@@ -1,7 +1,204 @@
-# Using crictl and ctr tools
+# Using container tools
 
 # Overview 
 This lab introduces alternative tools to debug and troubleshoot running pods and containers. 
+
+## Using runc
+`runc` can be used to interact with the underlying system responsible for all OCI compliant container runtimes. 
+
+### Install runc
+Start by installing `runc`
+```
+sudo apt install -y runc
+```
+
+### Create an OCI application bundle
+Create a working directory:
+```
+mkdir my-bundle
+cd $_
+
+sudo runc spec
+```
+
+`runc` spec generates a dummy `config.json`. It already has a "process" section which specifies which process to run inside the container - even with a couple of environment variables.
+
+```json
+{
+	"ociVersion": "1.0.1-dev",
+	"process": {
+		"terminal": false,
+		"user": {
+			"uid": 0,
+			"gid": 0
+		},
+		"args": [
+			"sleep",
+			"infinite"
+		],
+		"env": [
+			"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+			"TERM=xterm"
+		],
+```
+
+It also defines where to look for the root filesystem:
+```json
+...
+
+        "root": {
+                "path": "rootfs",
+                "readonly": true
+
+        },
+...
+```
+
+and multiple other things, including default mounts inside the container, capabilities, hostname etc. If you inspect this file, you will notice, that many sections are platform-agnostic and the ones that are specific to concrete OS are nested inside appropriate section. For example, you will notice there is a "linux" section with Linux specific options.
+
+Run the bundle 
+```
+sudo runc run test
+```
+
+`runc` returns an error because it is missing the root filesystem for the container. 
+```
+rootfs (/home/ubuntu/my-bundle/rootfs) does not exist
+```
+
+Ok, create the directory to resolve the issue 
+```
+mkdir rootfs
+runc run test
+```
+
+Output:
+```
+container_linux.go:349: starting container process caused "exec: \"sleep\": executable file not found in $PATH"
+```
+
+This makes total sense - empty folder is not really a useful root filesystem, our container has no chance of doing anything useful. We need to create a real Linux root filesystem.
+
+We are going to use Skopeo and umoci to download an image and unpack the root filesystem to our `my-bundle` directory.
+
+## Use Skopeo and umoci to get an OCI application bundle
+Creating a root filesystem from scratch is a rather cumbersome experience, so instead let's use one of the existing minimal images - `busybox`
+
+To pull the image, we first need to install `skopeo`. 
+Skopeo is a command line utility that performs various operations on container images and image repositories.
+
+Skopeo can copy images between different sources and destinations, inspect images and even delete them. Skopeo can not build images, it won't know what to do with your Containerfile. It's perfect for CI/CD pipelines that automate container image promotion.
+
+### Install Skopeo
+```
+. /etc/os-release
+echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | sudo tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key | sudo apt-key add -
+sudo apt-get update
+sudo apt-get -y install skopeo
+```
+
+Copy the `busybox` image from Docker Hub to a local OCI compliant store. 
+```
+skopeo copy docker://busybox:latest oci:busybox:latest
+```
+There is no "pull" - we need to tell Skopeo both source and destination for the image. Skopeo supports almost a dozen different types of sources and destinations. Note that this command will create a new `busybox` folder, inside which you will find all of the OCI Image files, with different image layers, manifest etc.
+
+What we copied is an OCI Image, but as we already know, `runc` needs an OCI Runtime Bundle. We need a tool that will convert an image to a bundle. This tool will be `umoci` - an openSUSE utility with the purpose of manipulating OCI images. Use `umoci unpack` to convert an OCI image a bundle.
+
+### Install umoci
+```
+wget https://github.com/opencontainers/umoci/releases/download/v0.4.7/umoci.amd64 && sudo cp umoci.amd64 /usr/local/bin/umoci
+```
+
+### Convert image to bundle
+```
+umoci unpack --image busybox:latest bundle
+```
+Take a look at what's in side the `bundle` folder:
+```
+ls bundle
+
+config.json
+rootfs
+sha256_73c6c5e21d7d3467437633012becf19e632b2589234d7c6d0560083e1c70cd23.mtree
+umoci.json
+```
+We already have `config.json`, so let's just copy ``rootfs directory to previously created ``my-bundle directory. 
+
+The `rootfs` directory containers a minimal `/` (root) filesystem, which you can see with `ls`.
+```
+ls rootfs
+
+bin  dev  etc  home  proc  root  sys  tmp  usr  var
+```
+
+### Run OCI application bundle with runc
+We are ready to run our application bundle as a container named `test`:
+```
+sudo runc run test
+```
+
+After running the above command a container is started with a new shell.
+
+```
+# runc run test
+/ # ls
+bin   dev   etc   home  proc  root  sys   tmp   usr   var
+```
+
+We run the previous container in a default `foreground` mode. In this mode, each container process becomes a child process of a long-running `runc` process:
+
+```
+6801   997  \_ sshd: root [priv]
+6805  6801      \_ sshd: root@pts/1
+6806  6805          \_ -bash
+6825  6806              \_ zsh
+7342  6825                  \_ runc run test
+7360  7342                  |   \_ runc run test
+```
+
+Let's inspect this container a bit closer by replacing the `sh` command with `sleep infinite` and setting terminal option to "false" inside `config.json`. runc does not provide a whole lot of command line arguments. It has commands like `start`, `stop` and `run`, but the configuration of the container is always coming from the file, not from the command line:
+
+Update `config.json`, and change `terminal` to `false` and `args` to `sleep infinite` as shown below.
+```json
+{
+        "ociVersion": "1.0.1-dev",
+        "process": {
+                "terminal": false,
+                "user": {
+                        "uid": 0,
+                        "gid": 0
+                },
+                "args": [
+                        "sleep",
+                        "infinite"
+                ]
+...
+```
+
+Run the container in `detached` mode. 
+```
+sudo runc run test --detach
+```
+
+To see running containers use `runc list`
+```
+sudo runc list
+
+ID          PID         STATUS      BUNDLE            CREATED                          OWNER
+test        4258        running     /root/my-bundle   2020-04-23T20:29:39.371137097Z   root
+```
+Confirm the state file for `runc` is present and populated
+```
+sudo apt install -y jq
+sudo cat /run/runc/test/state.json | jq . | head
+```
+
+As we ran the container in detached mode, there is no relation between the original `runc run` command (there is no such process anymore) and this container process.
+
+
+
 
 ## Using ctr 
 The `ctr` tool can be used to interact directly with `containerd`. It supports many features including: 
@@ -249,7 +446,7 @@ Now look at the container's metadata:
 sudo crictl inspect $(sudo crictl ps -lq)
 ```
 
-## Congrats!
+# Congrats!
 
 
 

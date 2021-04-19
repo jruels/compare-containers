@@ -1,5 +1,8 @@
 # Install Kubernetes with Docker on AWS
 
+# Overview
+This lab walks through using `kubeadm` to install Kubernetes with Docker as the container runtime.
+
 ## Install Kubernetes on all servers
 
 Following commands must be run as the root user. To become root run: 
@@ -20,15 +23,16 @@ echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/
 Now that you've added the repository install the packages
 ```
 apt-get update
-apt-get install -y kubelet=1.20.2-00 kubeadm=1.20.2-00 kubectl
+apt-get install -y kubelet=1.21.0-00 kubeadm=1.21.0-00 kubectl
 ```
 
 The kubelet is now restarting every few seconds, as it waits in a `crashloop` for `kubeadm` to tell it what to do.
 
 ### Initialize the Master 
-Run the following command on the master node to initialize 
+Run the following commands **only on the master node**.
+Initialize the master node
 ```
-kubeadm init --kubernetes-version=1.20.2 --ignore-preflight-errors=all
+kubeadm init --kubernetes-version=1.21.0 --ignore-preflight-errors=all
 ```
 
 If everything was successful output will contain 
@@ -69,7 +73,7 @@ kubectl get pods -n kube-system
 ### Join nodes to cluster 
 Log into each of the worker nodes and run the join command from `kubeadm init` master output. 
 ```
-sudo kubeadm join <command from kubeadm init output> --ignore-preflight-errors=all
+kubeadm join <command from kubeadm init output>
 ```
 
 To confirm nodes have joined successfully log back into master and run 
