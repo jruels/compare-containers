@@ -66,6 +66,7 @@ Look around, and `exit` when done.
 
 
 ```bash
+sudo apt install -y cgroup-tools
 sudo cgcreate -a ubuntu -g memory:playground
 ```
 
