@@ -12,6 +12,7 @@ Instructor will provide lab VM sheet.
 ## Labs
 
 ### Day 1
+Lab 1: [cgroups-namespaces](/labs/cgroups-namespaces/)  
 Lab 1: [Build Docker image manually](/labs/images/images_manually.md/)  
 Lab 1: [Build Docker image with a Dockerfile](/labs/images/images_dockerfile.md/)  
 Lab 1: [Install Kubernetes with Docker](https://jruels.github.io/compare-containers/labs/install-k8s-docker/)  
