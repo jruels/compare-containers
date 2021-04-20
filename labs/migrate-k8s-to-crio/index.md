@@ -68,7 +68,7 @@ sudo systemctl stop kubelet docker
 
 Set some environment variables to install the correct version of CRI-O
 * `OS` = Operating System version 
-* `VERSION` = Kubernetes version`
+* `VERSION` = Kubernetes version
 
 ```
 export OS=xUbuntu_20.04
@@ -102,7 +102,7 @@ systemctl start crio
 At this point you should be able to run `crictl info` and `crictl ps` successfully.
 
 ### Change container runtime
-Update the `kubelet` configuration to use `crio`
+Update the `kubelet` configuration to use `crio`   
 Edit the file `/var/lib/kubelet/kubeadm-flags.env`. 
 
 Add the `crio` runtime to the flags. `--container-runtime=remote` and `--container-runtime-endpoint=unix:///var/run/crio/crio.sock`
