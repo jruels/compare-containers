@@ -190,23 +190,9 @@ ee668c0a654fd       3 minutes ago       Ready               nginx-deployment-66b
 932cf76cc2a27       22 minutes ago      Ready               kube-proxy-x54nq                    kube-system         0
 7683edcadb531       22 minutes ago      Ready               weave-net-tkd2d                     kube-system         0
 ```
-There are two namespaces, the new `k8s.io` one was created when we enabled `containerd` in the kubelet. 
 
-Check that namespace for running containers 
-```
-sudo ctr -n k8s.io container ls
-```
 
-Output: 
-```
-CONTAINER                                                           IMAGE                                                                                                      RUNTIME
-..snip
-306743d42e5a2e5a4cf754013506d6f3f416ca0a669d89c984d903b4bda5d39f    docker.io/weaveworks/weave-npc:2.8.1                                                                       io.containerd.runc.v2
-4599ba8660c7c8efc85499000434271c55536441743f7686dbcea74f247f46e9    k8s.gcr.io/kube-proxy:v1.21.0                                                                              io.containerd.runc.v2
-701bf14f65b25d2c4955744837bde03c1afe5f76cec2c985f34fb67eabe50b28    docker.io/library/nginx:1.14.2                                                                             io.containerd.runc.v2
-```
+We can see that the `nginx` containers were created with `crio`
 
-We can see that the `nginx` containers were created with `containerd`
-
-Now that this node has been successfully migrated to containerd, migrate the rest of the worker nodes. 
+Now that this node has been successfully migrated to crio, migrate the other worker node using the same steps. 
 # Congrats! 
