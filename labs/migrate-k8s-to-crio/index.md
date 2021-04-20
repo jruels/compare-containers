@@ -138,7 +138,7 @@ ip-10-0-102-56    Ready                      <none>                 45m   v1.21.
 As you can see node `ip-10-0-102-56` is running `cri-o` in my configuration.
 
 ### Uncordon node 
-The node changed to use `containerd` is still cordoned. To add it back into the scheduling pool it must be uncordoned. 
+The node changed to use `crio` is still cordoned. To add it back into the scheduling pool it must be uncordoned. 
 ```
 kubectl uncordon ip-10-0-102-56
 ```
