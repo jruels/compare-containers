@@ -12,7 +12,7 @@ Instructor will provide lab VM sheet.
 ## Labs
 
 ### Day 1
-Lab 1: [cgroups-namespaces](/labs/cgroups-namespaces/)  
+Lab 1: [cgroups-namespaces](https://jruels.github.io/compare-containers/labs/cgroups-namespaces/)  
 Lab 2: [Install Kubernetes with Docker](https://jruels.github.io/compare-containers/labs/install-k8s-docker/)  
 Lab 3: [Migrate Kubernetes cluster to CRI-O](https://jruels.github.io/compare-containers/labs/migrate-k8s-to-crio/)  
 Lab 4: [Using container tools](labs/crictl-and-ctr/)  
