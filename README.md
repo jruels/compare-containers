@@ -13,11 +13,9 @@ Instructor will provide lab VM sheet.
 
 ### Day 1
 Lab 1: [cgroups-namespaces](/labs/cgroups-namespaces/)  
-Lab 1: [Build Docker image manually](/labs/images/images_manually.md/)  
-Lab 1: [Build Docker image with a Dockerfile](/labs/images/images_dockerfile.md/)  
-Lab 1: [Install Kubernetes with Docker](https://jruels.github.io/compare-containers/labs/install-k8s-docker/)  
-Lab 2: [Migrate Kubernetes cluster to crio](https://jruels.github.io/compare-containers/labs/migrate-k8s-to-crio/)  
-Lab 3: [Using container tools](labs/crictl-and-ctr/)  
-Lab 4: [Building images without Docker](labs/building-images-without-docker/)  
+Lab 2: [Install Kubernetes with Docker](https://jruels.github.io/compare-containers/labs/install-k8s-docker/)  
+Lab 3: [Migrate Kubernetes cluster to crio](https://jruels.github.io/compare-containers/labs/migrate-k8s-to-crio/)  
+Lab 4: [Using container tools](labs/crictl-and-ctr/)  
+Lab 5: [Building images without Docker](labs/building-images-without-docker/)  
 
 
