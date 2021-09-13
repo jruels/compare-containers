@@ -214,7 +214,7 @@ Note: You can copy a file to a different container by passing the name of the de
 
 The following example command copies the `HelloWorld.js` to the `/tmp` directory:
 
-To set the entry point for your container, enter the `buildah config` command with the ``--entrypoint argument:
+To set the entry point for your container, enter the `buildah config` command with the `--entrypoint` argument:
 ```
 sudo buildah config --entrypoint "node HelloWorld.js" $container
 ```
