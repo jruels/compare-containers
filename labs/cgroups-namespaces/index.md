@@ -36,7 +36,11 @@ Run any container, for example:
 docker run --detach alpine sleep 300
 ```
 
-Copy the container id for your running container, this is $CID below
+Copy the container id for your running container, and export it. This is $CID below
+
+```sh
+export CID=<container ID>
+```
 
 If you don't already have the CID, you can find it with `docker ps`
 
