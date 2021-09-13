@@ -87,6 +87,11 @@ Let's set a 10MiB memory limit for the cgroup
 echo 10485760 | tee /sys/fs/cgroup/memory/playground/memory.limit_in_bytes
 ```
 
+Install `memhog`
+```sh
+sudo apt install numactl
+```
+
 Let's try running a memory hogging program:
 
 ```bash
@@ -103,9 +108,7 @@ memhog 10485760 1
 ```
 
 You should see this:
-> allocating 10485760 bytes...
-> writing 10485760 bytes...
-> Killed
+> .Killed
 
 What is the exit code? What does this exit code signify?
 ```bash
