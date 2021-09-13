@@ -142,7 +142,7 @@ You can see that it added bash to the container.
 
 Similarly to how you've installed `bash`, run the `buildah run` command to install `node` and `npm`:
 ```
-sudo buildah run $container -- apk add --update nodejs nodejs-npm
+sudo buildah run $container -- apk add --update nodejs npm
 ```
 
 You can use the the `buildah config` command to set the image configuration values. The following command sets the working directory to `/usr/src/app/`:
